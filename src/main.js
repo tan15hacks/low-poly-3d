@@ -344,10 +344,10 @@ function updateMovement(delta) {
   clampPlayer();
 }
 
-function updateFireflies(elapsed) {
+function updateFireflies(delta, elapsed) {
   for (const firefly of fireflies) {
     if (!firefly.userData.active) continue;
-    firefly.rotation.y += 2.5 * clock.getDelta() * 0.2;
+    firefly.rotation.y += delta * 1.1;
     firefly.position.y = firefly.userData.baseY + Math.sin(elapsed * 3 + firefly.userData.phase) * 0.22;
 
     const distance = firefly.position.distanceTo(player.position);
@@ -425,7 +425,7 @@ function update(delta) {
 
   if (state.started) {
     updateMovement(delta);
-    updateFireflies(elapsed);
+    updateFireflies(delta, elapsed);
     updateEnemy(delta);
     updateShrine(elapsed);
     updateLantern(delta);
@@ -535,9 +535,9 @@ function setupControls() {
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const radius = rect.width * 0.39;
-    const dx = THREE.MathUtils.clamp(event.clientX - centerX, -radius, radius);
-    const dy = THREE.MathUtils.clamp(event.clientY - centerY, -radius, radius);
-    const length = Math.hypot(dx, dy);
+    const dx = event.clientX - centerX;
+    const dy = event.clientY - centerY;
+    const length = Math.hypot(dx, dy) || 1;
     const limitedX = length > radius ? (dx / length) * radius : dx;
     const limitedY = length > radius ? (dy / length) * radius : dy;
 
